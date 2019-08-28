@@ -59,37 +59,19 @@ export default class Example1 extends Vue {
     // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     // const cube = new THREE.Mesh(geometry, material);
 
+    const x = 2;
+    const y = 2;
+
     const geometry = new THREE.BufferGeometry();
-    const vertices: number[] = [];
+    const vertices = new Float32Array(x * y * 18);
 
-    const x = 3;
-    const y = 3;
-
+    let num = 0;
     for (let j = 0; j < y; j++) {
       for (let i = 0; i < x; i++) {
-        vertices.push(i);
-        vertices.push(0 - j);
-        vertices.push(1);
-
-        vertices.push(i + 1);
-        vertices.push(0 - j);
-        vertices.push(1);
-
-        vertices.push(i + 1);
-        vertices.push(1);
-        vertices.push(1);
-
-        vertices.push(i + 1);
-        vertices.push(1);
-        vertices.push(1);
-
-        vertices.push(i);
-        vertices.push(1);
-        vertices.push(1);
-
-        vertices.push(i);
-        vertices.push(0 - j);
-        vertices.push(1);
+        vertices.set(
+          [i, -j, 1, i + 1, -j, 1, i + 1, 1, 1, i + 1, 1, 1, i, 1, 1, i, -j, 1],
+          (i + j * x) * 18
+        );
       }
     }
 
