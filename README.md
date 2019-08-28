@@ -1,4 +1,4 @@
-# three
+# this is my three.js project.
 
 ## Project setup
 ```
