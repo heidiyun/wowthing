@@ -1,6 +1,6 @@
 import { Vue, Component } from 'vue-property-decorator';
 import * as THREE from 'three';
-import { DirectionalLight, Side } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 @Component({})
 export default class Example1 extends Vue {
@@ -12,6 +12,10 @@ export default class Example1 extends Vue {
   private camera!: THREE.Camera;
   private renderer!: THREE.WebGLRenderer;
   private cube!: THREE.Mesh;
+  private material!: THREE.MeshBasicMaterial;
+  private geometry: THREE.BufferGeometry = new THREE.BufferGeometry();
+  private value: number = 0;
+  private control!: OrbitControls;
 
   private mounted() {
     const width = this.$refs.renderer.clientWidth;
@@ -25,7 +29,7 @@ export default class Example1 extends Vue {
 
     //aspect 종횡비
     // fov (field of View) : 화각 () 확대를 하고싶으면 fov를 줄이면 된다.
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(200, width / height, 0.1, 1000);
 
     // this.camera = new THREE.OrthographicCamera(
     //   -2 * (width / height),
@@ -59,10 +63,9 @@ export default class Example1 extends Vue {
     // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     // const cube = new THREE.Mesh(geometry, material);
 
-    const x = 10;
-    const y = 10;
+    const x = 20;
+    const y = 20;
 
-    const geometry = new THREE.BufferGeometry();
     // const vertices = new Float32Array(x * y * 18);
 
     // for (let j = 0; j < y; j++) {
@@ -75,10 +78,14 @@ export default class Example1 extends Vue {
     // }
 
     const vertices = new Float32Array((x + 1) * (y + 1) * 3);
+    const colors = new Float32Array((x + 1) * (y + 1) * 3);
 
     for (let j = 0; j < y + 1; j++) {
       for (let i = 0; i < x + 1; i++) {
-        vertices.set([i, j, 1], (i + j * (x + 1)) * 3);
+        vertices.set(
+          [i - (x - x / 2), j - (y - y / 2), 1],
+          (i + j * (x + 1)) * 3
+        );
       }
     }
 
@@ -94,19 +101,22 @@ export default class Example1 extends Vue {
       indices.push(std);
     }
 
-    geometry.setIndex(indices);
+    this.geometry.setIndex(indices);
 
-    geometry.addAttribute(
+    this.geometry.addAttribute(
       'position',
       new THREE.BufferAttribute(new Float32Array(vertices), 3)
     );
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xff0000,
+
+    this.material = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide
     });
-    const cube = new THREE.Mesh(geometry, material);
+    this.cube = new THREE.Mesh(this.geometry, this.material);
 
-    this.scene.add(cube);
+    this.control = new OrbitControls(this.camera, this.renderer.domElement);
+    this.control.update();
+
+    this.scene.add(this.cube);
     this.camera.position.z = 5;
 
     this.update();
@@ -116,8 +126,26 @@ export default class Example1 extends Vue {
     requestAnimationFrame(this.update);
     // 렌더링을 다시 해줘
     // this는 class가 주인인데, 시스템에서 호출할 때는 this가 바껴서 들어와서 this.render를 찾을 수 없는 것.
+
+    this.control.update();
+    this.value += 0.2;
+
+    let t = 0;
+    for (
+      let i = 0;
+      i < this.geometry.getAttribute('position').array.length;
+      i++
+    ) {
+      t += 0.2;
+      // 값이 커질수록 물결이 많아짐..왜?
+      if (i % 3 === 2) {
+        this.geometry.getAttribute('position').array[i] +=
+          Math.sin(this.value + t) * 0.02;
+        // 값이 커질수록 범위가 커져서 폭이 커지는 것인가?
+      }
+    }
+
+    this.geometry.getAttribute('position').needsUpdate = true;
     this.renderer.render(this.scene, this.camera);
-    // this.cube.rotation.x += 0.01;
-    // this.cube.rotation.y += 0.01;
   }
 }

@@ -8,4 +8,6 @@
 @import './example1.scss';
 </style>
 
-<script src="./example1.ts"></script>
+<script src="./example1.ts">
+
+</script>
