@@ -59,27 +59,51 @@ export default class Example1 extends Vue {
     // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     // const cube = new THREE.Mesh(geometry, material);
 
-    const x = 2;
-    const y = 2;
+    const x = 10;
+    const y = 10;
 
     const geometry = new THREE.BufferGeometry();
-    const vertices = new Float32Array(x * y * 18);
+    // const vertices = new Float32Array(x * y * 18);
 
-    let num = 0;
-    for (let j = 0; j < y; j++) {
-      for (let i = 0; i < x; i++) {
-        vertices.set(
-          [i, -j, 1, i + 1, -j, 1, i + 1, 1, 1, i + 1, 1, 1, i, 1, 1, i, -j, 1],
-          (i + j * x) * 18
-        );
+    // for (let j = 0; j < y; j++) {
+    //   for (let i = 0; i < x; i++) {
+    //     vertices.set(
+    //       [i, -j, 1, i + 1, -j, 1, i + 1, 1, 1, i + 1, 1, 1, i, 1, 1, i, -j, 1],
+    //       (i + j * x) * 18
+    //     );
+    //   }
+    // }
+
+    const vertices = new Float32Array((x + 1) * (y + 1) * 3);
+
+    for (let j = 0; j < y + 1; j++) {
+      for (let i = 0; i < x + 1; i++) {
+        vertices.set([i, j, 1], (i + j * (x + 1)) * 3);
       }
     }
+
+    const indices: number[] = [];
+
+    for (let i = 0; i < x * y; i++) {
+      const std = (x + 1) * (Math.floor(i / x) + 1) + (i % x);
+      indices.push(std);
+      indices.push(std + 1);
+      indices.push(std - x);
+      indices.push(std - x);
+      indices.push(std - (x + 1));
+      indices.push(std);
+    }
+
+    geometry.setIndex(indices);
 
     geometry.addAttribute(
       'position',
       new THREE.BufferAttribute(new Float32Array(vertices), 3)
     );
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      side: THREE.DoubleSide
+    });
     const cube = new THREE.Mesh(geometry, material);
 
     this.scene.add(cube);
