@@ -104,8 +104,6 @@ export default class Example1 extends Vue {
       }
     }
 
-    console.log(this.props.positions);
-
     const indices: number[] = [];
 
     for (let i = 0; i < x * y; i++) {
@@ -155,24 +153,30 @@ export default class Example1 extends Vue {
     //   }
     // }
 
+    let a = 0;
     for (
       let i = 0;
       i < this.geometry.getAttribute('position').array.length;
       i++
     ) {
+      if (i % 20 === 0) {
+        a = this.value;
+      }
+      a += 0.3; 
+
       this.geometry
         .getAttribute('position')
-        .setZ(i, Math.sin(this.value + i * 0.01) * 0.9);
+        .setZ(i, Math.sin(a + i * 0.01) * 0.9);
+
       // 값이 커질수록 물결이 많아짐..왜?
-      if (i % 3 === 2) {
-        // this.geometry.getAttribute('position').array[i] +=
-        // Math.sin(this.value + i * 0.003) * 0.07;
-        
-        // 값이 커질수록 범위가 커져서 폭이 커지는 것인가?
-      }
+      // this.geometry.getAttribute('position').array[i] +=
+      // Math.sin(this.value + i * 0.003) * 0.07;
+
+      // 값이 커질수록 범위가 커져서 폭이 커지는 것인가?
     }
 
-    this.geometry.getAttribute('position').needsUpdate = true;
+    this.attribute.position.needsUpdate = true;
+    // this.geometry.getAttribute('position').needsUpdate = true;
 
     this.renderer.render(this.scene, this.camera);
   }
