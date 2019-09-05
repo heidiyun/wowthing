@@ -18,6 +18,22 @@
             <v-list-item-title>example1</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/water-wave">
+          <v-list-item-action>
+            <v-icon>contact_mail</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>water-wave</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/shader">
+          <v-list-item-action>
+            <v-icon>contact_mail</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>shader</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
