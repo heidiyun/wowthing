@@ -23,7 +23,7 @@ varying vec4 vColor;
 
 void main()	{
     vec3 pos = position;
-    pos.z = sin(position.x * 0.5 + time);
+    pos.z = sin(position.x * 0.5 + time); 
     // position.z = sin(position.y * 0.3);
     // -> 위처럼 재정의하면 안되나봐....
     // vPosition = position; 

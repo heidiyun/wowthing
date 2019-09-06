@@ -4,9 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { BufferAttribute, Vector2, Vector3 } from 'three';
 
 //@ts-ignore
-import vs from '!!raw-loader!./default.vert'
+import vs from '!!raw-loader!./default.vert';
 //@ts-ignore
-import fs from '!!raw-loader!./default.frag'
+import fs from '!!raw-loader!./default.frag';
 
 interface SampleAttributes {
   position: THREE.BufferAttribute;
@@ -56,26 +56,7 @@ export default class Shader extends Vue {
       1000
     );
 
-    // this.camera = new THREE.OrthographicCamera(
-    //   -2 * (width / height),
-    //   2 * (width / height),
-    //   -2,
-    //   2,
-    //   -1,
-    //   1000
-    // );
-
-    // this.camera = new THREE.OrthographicCamera(
-    //   -(width / 2),
-    //   width / 2,
-    //   -(height / 2),
-    //   height / 2,
-    //   -1,
-    //   1000
-    // );
-
     this.renderer = new THREE.WebGLRenderer();
-    // 화면에 보이는 버퍼..
 
     this.renderer.setSize(
       this.$refs.renderer.clientWidth,
@@ -86,8 +67,7 @@ export default class Shader extends Vue {
 
     this.geometry = new THREE.BufferGeometry();
 
-
-    this.material = new THREE.RawShaderMaterial( {
+    this.material = new THREE.RawShaderMaterial({
       uniforms: {
         time: { value: this.tick }
       },
@@ -95,14 +75,12 @@ export default class Shader extends Vue {
       fragmentShader: fs,
       side: THREE.DoubleSide,
       transparent: true
-    } );
-
-    
+    });
 
     const count = (this.countX + 1) * (this.countY + 1);
 
     this.props = {
-      positions: new Float32Array(count * 3),
+      positions: new Float32Array(count * 18),
       color: new Float32Array(count * 3)
     };
 
@@ -111,44 +89,37 @@ export default class Shader extends Vue {
       color: new THREE.BufferAttribute(this.props.color, 3)
     };
 
-    for (let j = 0; j < this.countY + 1; j++) {
-      for (let i = 0; i < this.countX + 1; i++) {
+    for (let j = 0; j < this.countY; j++) {
+      for (let i = 0; i < this.countX; i++) {
         this.props.positions.set(
           [
             i - (this.countX - this.countX / 2),
             j - (this.countY - this.countY / 2),
+            1,
+            i - (this.countX - this.countX / 2),
+            j + 1 - (this.countY - this.countY / 2),
+            1,
+            i + 1 - (this.countX - this.countX / 2),
+            j - (this.countY - this.countY / 2),
+            1,
+            i + 1 - (this.countX - this.countX / 2),
+            j - (this.countY - this.countY / 2),
+            1,
+            i - (this.countX - this.countX / 2),
+            j + 1 - (this.countY - this.countY / 2),
+            1,
+            i + 1 - (this.countX - this.countX / 2),
+            j + 1 - (this.countY - this.countY / 2),
             1
           ],
-          (i + j * (this.countX + 1)) * 3
+          (i + j * this.countX) * 18
         );
-
-        const r = (j * (i / this.countX)) / 255;
-        const g = (j * (i % this.countX)) / 255;
-
-        // this.props.color.set([r, g, 0.5], (i + j * (this.countX + 1)) * 3);
       }
     }
 
-    const indices: number[] = [];
-
-    for (let i = 0; i < this.countX * this.countY; i++) {
-      const std =
-        (this.countX + 1) * (Math.floor(i / this.countX) + 1) +
-        (i % this.countX);
-      indices.push(std);
-      indices.push(std + 1);
-      indices.push(std - this.countX);
-      indices.push(std - this.countX);
-      indices.push(std - (this.countX + 1));
-      indices.push(std);
-    }
-
-    this.geometry.setIndex(indices);
-
     this.geometry.addAttribute('position', this.attribute.position);
-    this.geometry.addAttribute('color', this.attribute.color);
+    // this.geometry.addAttribute('color', this.attribute.color);
 
-    
     this.cube = new THREE.Mesh(this.geometry, this.material);
 
     this.control = new OrbitControls(this.camera, this.renderer.domElement);
@@ -175,10 +146,12 @@ export default class Shader extends Vue {
 
     this.control.update();
 
-    (this.material as THREE.RawShaderMaterial).uniforms.time = {value : this.tick};
+    (this.material as THREE.RawShaderMaterial).uniforms.time = {
+      value: this.tick
+    };
 
     this.tick += 0.03;
-   
+
     this.attribute.position.needsUpdate = true;
     this.attribute.color.needsUpdate = true;
 

@@ -1,4 +1,4 @@
 
-import Shader from './waterWave';
+import Shader from './shader';
 
 export default Shader;

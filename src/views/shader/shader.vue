@@ -5,8 +5,8 @@
 </template>
 
 <style lang="scss">
-@import './waterWave.scss';
+@import './shader.scss';
 </style>
 
-<script src="./waterWave.ts">
+<script src="./shader.ts">
 </script>
