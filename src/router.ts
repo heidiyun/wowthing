@@ -4,6 +4,7 @@ import Main from './views/main';
 import Example1 from './views/example1';
 import WaterWave from './views/water-wave';
 import Shader from './views/shader';
+import Liquid from './views/liquid/liquid';
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/shader',
       name: 'shader',
       component: Shader
+    },
+    {
+      path: '/liquid',
+      name: 'liquid',
+      component: Liquid
     }
   ]
 });

@@ -7,12 +7,21 @@ uniform mat4 projectionMatrix; // optional
 // 모든 정점의 스레드가 같은 메모리 영역을 참조한다. 
 
 uniform float time;
+uniform float random;
 
 attribute vec3 position;
             // geometry에 넣어주는 정보
             // 3개로 잘라서 넣어준다. 0~2가 하나의 정점
 attribute vec4 color;
+
+attribute vec3 offset;
+		
+		attribute vec4 orientationStart;
+		attribute vec4 orientationEnd;
+
 varying vec3 vPosition;
+
+
 // varying vertext shader에서 fragment shader로 정보를 넘기는 것. 
 varying vec4 vColor;
 // 정점 3개에 대한 선형보간을 한 내 픽셀에 대한 색을 넘겨주는 것이 frag-color
@@ -23,11 +32,27 @@ varying vec4 vColor;
 
 void main()	{
     vec3 pos = position;
-    pos.z = sin(position.x * 0.5 + time); 
+    vColor = color;
+    
+    // pos.x = sin(pos.x * random + tick);
     // position.z = sin(position.y * 0.3);
     // -> 위처럼 재정의하면 안되나봐....
     // vPosition = position; 
-    vColor = color;
+
+    // vec4 orientation = normalize( mix( orientationStart, orientationEnd, time ) );
+	// vec3 vcV = cross( orientation.xyz, pos );
+	
+    
+
+
+    
+
+pos.x = (pos.x /2.0 + (pos.x/2.0  + 1.2) * time); 
+    pos.y = (pos.y/2.0 + (pos.y/2.0 + 1.2)* time);
+    pos.z = sin(pos.z  * time )* 10.0 ;
+
+    vPosition = pos;
+    
     gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
     // 화면에 물체가 어디에 보일지.
     // 카메라 위치에 대해 화면의 물체가 어디에 위치해 있는지 결정하는 로직.

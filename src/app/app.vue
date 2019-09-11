@@ -34,6 +34,14 @@
             <v-list-item-title>shader</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+         <v-list-item to="/liquid">
+          <v-list-item-action>
+            <v-icon>contact_mail</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>liquid</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
