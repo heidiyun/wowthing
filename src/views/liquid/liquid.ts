@@ -45,6 +45,14 @@ export default class Liquid extends Vue {
   private width = 0;
   private height = 0;
 
+  private mouseClick = false;
+  private a = 0;
+  private tex1 = true;
+
+  private onClick() {
+    this.mouseClick = true;
+  }
+
   private mounted() {
     this.width = this.$refs.renderer.clientWidth;
     this.height = this.$refs.renderer.clientHeight;
@@ -67,15 +75,23 @@ export default class Liquid extends Vue {
 
     this.geometry = new THREE.PlaneGeometry(5, 5);
 
-    const texture1 = new THREE.TextureLoader().load(
-      'https://pbs.twimg.com/media/DVSAm8CVQAAQJ9i.jpg'
-    );
-    const texture2 = new THREE.TextureLoader().load('/normalmap.jpg');
+    const texture1 = new THREE.TextureLoader().load('/cloud.jpg');
+    const texture2 = new THREE.TextureLoader().load('/sample.png');
+    const texture3 = new THREE.TextureLoader().load('/winter.jpg');
+
+    const heightMap = new THREE.TextureLoader().load('/heightmap.png');
+
     texture1.wrapS = THREE.RepeatWrapping;
     texture1.wrapT = THREE.RepeatWrapping;
 
     texture2.wrapS = THREE.RepeatWrapping;
     texture2.wrapT = THREE.RepeatWrapping;
+
+    texture3.wrapS = THREE.RepeatWrapping;
+    texture3.wrapT = THREE.RepeatWrapping;
+
+    heightMap.wrapS = THREE.RepeatWrapping;
+    heightMap.wrapT = THREE.RepeatWrapping;
 
     this.material = new THREE.RawShaderMaterial({
       uniforms: {
@@ -87,7 +103,16 @@ export default class Liquid extends Vue {
           type: 't',
           value: texture2
         },
-        time: { value: this.tick }
+        texture3: {
+          type: 't',
+          value: texture3
+        },
+        heightMap: {
+          type: 't',
+          value: heightMap
+        },
+        time: { value: this.tick },
+        a: { value: this.a }
       },
       vertexShader: vs,
       fragmentShader: fs,
@@ -123,11 +148,35 @@ export default class Liquid extends Vue {
 
     this.control.update();
 
+    if (this.a > 3 && this.tex1) {
+      this.a = 31.4 / 2;
+      this.mouseClick = false;
+      this.tick = 1;
+      this.tex1 = false;
+      this.mouseClick = false;
+    }
+
+    if (this.a < -1 && !this.tex1) {
+      this.a = 0;
+      this.tick = 0;
+      this.mouseClick = false;
+      this.tex1 = true;
+    }
+
     (this.material as THREE.RawShaderMaterial).uniforms.time = {
       value: this.tick
     };
 
-    this.tick += 0.03;
+    if (this.mouseClick && this.tex1) {
+      this.a += 0.03;
+      this.tick += 0.03;
+    } else if (this.mouseClick && !this.tex1) {
+      this.a -= 0.03;
+    }
+
+    (this.material as THREE.RawShaderMaterial).uniforms.a = {
+      value: this.a
+    };
 
     this.attribute.position.needsUpdate = true;
     this.attribute.color.needsUpdate = true;
